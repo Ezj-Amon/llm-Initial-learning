@@ -226,3 +226,57 @@ md_pages = loader.load()
 >4. **如果一个结果与列表中已有结果的重复程度过高，则将其丢弃。**
 >
 >5. **重复步骤 3 和 4，直到找到所需数量的结果。**
+
+
+
+## 构建RAG应用
+
+### 智谱GLM（需自己封装api）
+
+| 模型编码     | 弃用日期            | 指向模型    |
+| ------------ | ------------------- | ----------- |
+| chatglm_pro  | 2024 年 12 月 31 日 | glm-4       |
+| chatglm_std  | 2024 年 12 月 31 日 | glm-3-turbo |
+| chatglm_lite | 2024 年 12 月 31 日 | glm-3-turbo |
+
+### 历史对话的记忆功能
+
+### 1. 记忆（Memory）
+
+使用 `ConversationBufferMemory` ，它保存聊天消息历史记录的列表，这些历史记录将在回答问题时与问题一起传递给聊天机器人，从而将它们添加到上下文中。
+
+```python
+from langchain.memory import ConversationBufferMemory
+
+memory = ConversationBufferMemory(
+    memory_key="chat_history",  # 与 prompt 的输入变量保持一致。
+    return_messages=True  # 将以消息列表的形式返回聊天记录，而不是单个字符串
+)
+```
+
+### 2. 对话检索链（ConversationalRetrievalChain）
+
+1. 将之前的对话与新问题合并生成一个完整的查询语句。
+2. 在向量数据库中搜索该查询的相关文档。
+3. 获取结果后,存储所有答案到对话记忆区。
+4. 用户可在 UI 中查看完整的对话流程。
+
+### 部署知识库助手
+
+## [一、Streamlit 简介](https://datawhalechina.github.io/llm-universe/#/C4/3.部署知识库助手?id=一、streamlit-简介)
+
+`Streamlit` 是一个用于快速创建数据应用程序的开源 Python 库。它的设计目标是让数据科学家能够轻松地将数据分析和机器学习模型转化为具有交互性的 Web 应用程序，而无需深入了解 Web 开发。和常规 Web 框架，如 Flask/Django 的不同之处在于，它不需要你去编写任何客户端代码（HTML/CSS/JS），只需要编写普通的 Python 模块，就可以在很短的时间内创建美观并具备高度交互性的界面，从而快速生成数据分析或者机器学习的结果；另一方面，和那些只能通过拖拽生成的工具也不同的是，你仍然具有对代码的完整控制权。
+
+Streamlit 提供了一组简单而强大的基础模块，用于构建数据应用程序：
+
+- st.write()：这是最基本的模块之一，用于在应用程序中呈现文本、图像、表格等内容。
+- st.title()、st.header()、st.subheader()：这些模块用于添加标题、子标题和分组标题，以组织应用程序的布局。
+- st.text()、st.markdown()：用于添加文本内容，支持 Markdown 语法。
+- st.image()：用于添加图像到应用程序中。
+- st.dataframe()：用于呈现 Pandas 数据框。
+- st.table()：用于呈现简单的数据表格。
+- st.pyplot()、st.altair_chart()、st.plotly_chart()：用于呈现 Matplotlib、Altair 或 Plotly 绘制的图表。
+- st.selectbox()、st.multiselect()、st.slider()、st.text_input()：用于添加交互式小部件，允许用户在应用程序中进行选择、输入或滑动操作。
+- st.button()、st.checkbox()、st.radio()：用于添加按钮、复选框和单选按钮，以触发特定的操作。
+
+这些基础模块使得通过 Streamlit 能够轻松地构建交互式数据应用程序，并且在使用时可以根据需要进行组合和定制，更多内容请查看[官方文档](https://docs.streamlit.io/get-started)
